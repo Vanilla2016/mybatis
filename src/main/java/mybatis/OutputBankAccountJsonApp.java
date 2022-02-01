@@ -2,7 +2,10 @@ package mybatis;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import clinic.finance.beans.BankAccount;
 
 import javax.sql.DataSource;
 
@@ -21,10 +24,11 @@ import mybatis.mappers.DataMapper;
 import oracle.jdbc.proxy.annotation.GetCreator;
 
 /**
- * Hello world!
+ * OutputBankAccountJsonApp. Retrieves key details regarding Bank Account information from MySQL database table.
+ * Outputs them in JSON format.
  *
  */
-public class App 
+public class OutputBankAccountJsonApp 
 {
     public static void main( String[] args ) throws IOException
     {
@@ -50,8 +54,12 @@ public class App
     			new SqlSessionFactoryBuilder().build(configuration);
     	
     	try(SqlSession session = sqlSessionFactory.openSession()){
-    		int numOfAccounts = session.selectOne("getNumberOfAccounts");
-    		System.out.format("There are %d accounts, WHHHOOOOO!!!!", numOfAccounts);
+    		List<BankAccount> bankAccounts = session.selectList("getAllAccountsDetails", new Object());
+    		
+    		System.out.println("Account Details are as follows : ");
+    		for (BankAccount bankAccount : bankAccounts) {
+    			System.out.println(bankAccount.toJSON());
+    		}
     	}
     	
     }
